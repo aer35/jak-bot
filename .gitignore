@@ -1,0 +1,13 @@
+# dependencies
+/node_modules
+
+
+# typescript
+*.tsbuildinfo
+tsconfig.json
+
+#Local dev
+/.idea
+.env
+eslint.config.ts
+config.json
