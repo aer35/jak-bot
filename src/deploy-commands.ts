@@ -7,7 +7,7 @@ import {
 import fs from 'node:fs';
 import path from 'node:path';
 
-const commands = [];
+const commands: any[] = [];
 // Grab all the command folders from the commands directory you created earlier
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -41,7 +41,7 @@ const rest = new REST().setToken(DISCORD_TOKEN);
         const data = await rest.put(
             Routes.applicationGuildCommands(DISCORD_CLIENT_ID, DISCORD_GUILD_ID),
             {body: commands},
-        );
+        ) as unknown[];
 
         console.log(`Successfully reloaded ${data.length} application (/) commands.`);
     } catch (error) {
