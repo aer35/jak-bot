@@ -4,12 +4,10 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 
 ## Features
 
--TBD
+- Well eventually this will have ways to check reddit. But this framework can PONG when you PING for now. COOL!
 
 ## Requirements
 
-- Node.js (v16 or higher)
-- npm (v7 or higher)
 - Discord application Token
 - Discord client ID
 - Discord guild ID (Server ID)
