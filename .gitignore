@@ -10,3 +10,4 @@ tsconfig.json
 .idea/
 .env
 dist/
+database.db
