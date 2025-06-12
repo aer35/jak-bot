@@ -19,21 +19,23 @@ module.exports = {
     );
 
     const body = await res.json();
-    console.log(
-      "Received response from Reddit API: " + body.data.children.length,
-    );
 
     // Catch failure to fetch posts
     if (!body) {
       console.log("Failed to fetch posts from subreddit.");
       await interaction.reply("Failed to fetch posts from the subreddit.");
       return;
+    } else {
+      console.log(
+        "Received response from Reddit API. Number of posts: " +
+          body.data.children.length,
+      );
     }
 
     // Catch if the subreddit has no posts
     const posts = body.data.children;
     if (posts.length === 0) {
-      console.log("No posts found in subreddit.");
+      console.log("No posts found in subreddit. Exiting command.");
       await interaction.reply("No posts found.");
       return;
     }
@@ -43,6 +45,7 @@ module.exports = {
 
     // Turn the DB function into a promise-based function
     const runPromisifyDB = util.promisify(db.run);
+    console.log("Executing DB lookup for existing posts...");
     const allPostIDs: any = await runPromisifyDB("SELECT ID FROM posts");
     const allPostIDSet = new Set(allPostIDs.map((post) => post.data.ID));
     console.log("DB accessed, retrieved all post IDs." + allPostIDSet.size);
@@ -57,6 +60,7 @@ module.exports = {
     console.log("New posts to insert: " + filterNew.length);
     await Promise.all(
       filterNew.map((post) => {
+        console.log(`Inserting post: ${post.data.name}`);
         return runPromisifyDB(
           ("INSERT INTO posts (ID, link, user, title, score) VALUES (?,?,?,?,?)" +
             post.data.name,
@@ -67,7 +71,9 @@ module.exports = {
         );
       }),
     );
-    console.log("New posts inserted into the database.");
+    console.log(
+      "Finished inserting new posts into the database. Generating reply...",
+    );
 
     const replyContent = filterNew
       .map(
@@ -77,7 +83,7 @@ module.exports = {
       .join("\n");
     console.log("Sending discord message...");
 
-    // Bot sends one message with all the posts.
+    // Currently bot sends one message with all the posts.
     // TODO break out into multiple messages. One per post.
     await interaction.reply(replyContent);
   },

@@ -37,6 +37,7 @@ for (const folder of commandFolders) {
 
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
+    console.log(`Received interaction: ${interaction.commandName}`);
 
     const command = interaction.client.commands.get(interaction.commandName);
 
@@ -48,6 +49,7 @@ for (const folder of commandFolders) {
     }
 
     try {
+      console.log(`Command is valid. Executing...`);
       await command.execute(interaction);
     } catch (error) {
       console.error(error);
