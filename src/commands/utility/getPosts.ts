@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from "discord.js";
 import { SUBREDDIT_NAME } from "../../config";
 import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
+import { generateMessageContent } from "../../generateMessageContent";
+import { generateIndividualMessage } from "../../generateIndividualMessage";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -44,13 +46,13 @@ module.exports = {
 
     console.log("Executing DB lookup for existing posts...");
     const db = await dbSetup();
-    const allPostIDs: any = await fetchAll(db, "SELECT ID FROM posts");
-    const allPostIDSet = new Set(allPostIDs.map((post) => post.data.ID));
-    console.log("DB accessed, retrieved all post IDs." + allPostIDSet.size);
+    const allDBEntryIDs: any = await fetchAll(db, "SELECT ID FROM posts");
+    const allDBEntrySet = new Set(allDBEntryIDs.map((post) => post.ID));
+    console.log("DB accessed, retrieved all post IDs." + allDBEntrySet.size);
 
     // This array only has NEW posts that are not in the database.
     const filterNew = filterScore.filter(
-      (post) => !allPostIDSet.has(post.data.name),
+      (post) => !allDBEntrySet.has(post.data.name),
     );
 
     // TODO run this as a batch insert
@@ -59,21 +61,16 @@ module.exports = {
     await Promise.all(
       filterNew.map((post) => {
         console.log(`Inserting post: ${post.data.name}`);
-        console.log("Name type: " + typeof post.data.name);
-        console.log("url type: " + typeof post.data.url);
-        console.log("author type: " + typeof post.data.author);
-        console.log("title type: " + typeof post.data.title);
-        console.log("score type: " + typeof post.data.score);
         return runPromisifyDB(
           db,
-          `INSERT INTO posts (ID, link, user, title, score)
+          `INSERT INTO posts(ID, link, user, title, score)
                      VALUES (?, ?, ?, ?, ?)`,
           [
-            post.data.name as string,
-            post.data.url as string,
-            post.data.author as string,
-            post.data.title as string,
-            post.data.score as number,
+            post.data.name,
+            post.data.permalink,
+            post.data.author,
+            post.data.title,
+            post.data.score,
           ],
         );
       }),
@@ -82,16 +79,20 @@ module.exports = {
       "Finished inserting new posts into the database. Generating reply...",
     );
 
-    const replyContent = filterNew
-      .map(
-        (post) =>
-          `**Title:** ${post.data.title}\n**Author:** ${post.data.author}\n**Score:** ${post.data.score}\n**Link:** [Link](${post.data.url})\n`,
-      )
-      .join("\n");
-    console.log("Sending discord message...");
+    if (filterNew.length === 1) {
+      console.log("Sending discord message...");
 
-    // Currently bot sends one message with all the posts.
-    // TODO break out into multiple messages. One per post.
-    await interaction.reply(replyContent);
+      await interaction.reply(generateMessageContent(filterNew[0].data));
+    } else {
+      console.log(
+        "More than one new post to be sent. Breaking into multiple messages.",
+      );
+      await Promise.all(
+        filterNew.map((post) =>
+          generateIndividualMessage(post.data, interaction.channel),
+        ),
+      );
+      await interaction.reply("Successfully got new posts.");
+    }
   },
 };
