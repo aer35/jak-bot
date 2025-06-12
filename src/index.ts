@@ -77,5 +77,3 @@ client.once(Events.ClientReady, (readyClient) => {
 
 // Log in to Discord with your client's token
 client.login(DISCORD_TOKEN);
-
-// TODO Fix the DB setup. db.run needs to be promisified or called externally

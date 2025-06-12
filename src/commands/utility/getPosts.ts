@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 import { SUBREDDIT_NAME } from "../../config";
-import { db } from "../../db_setup";
-import * as util from "util";
+import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -43,10 +42,9 @@ module.exports = {
     // Filter down the number of posts to only those that we want.
     const filterScore = posts.filter((post) => post.data.score > 100);
 
-    // Turn the DB function into a promise-based function
-    const runPromisifyDB = util.promisify(db.run);
     console.log("Executing DB lookup for existing posts...");
-    const allPostIDs: any = await runPromisifyDB("SELECT ID FROM posts");
+    const db = await dbSetup();
+    const allPostIDs: any = await fetchAll(db, "SELECT ID FROM posts");
     const allPostIDSet = new Set(allPostIDs.map((post) => post.data.ID));
     console.log("DB accessed, retrieved all post IDs." + allPostIDSet.size);
 
@@ -61,13 +59,22 @@ module.exports = {
     await Promise.all(
       filterNew.map((post) => {
         console.log(`Inserting post: ${post.data.name}`);
+        console.log("Name type: " + typeof post.data.name);
+        console.log("url type: " + typeof post.data.url);
+        console.log("author type: " + typeof post.data.author);
+        console.log("title type: " + typeof post.data.title);
+        console.log("score type: " + typeof post.data.score);
         return runPromisifyDB(
-          ("INSERT INTO posts (ID, link, user, title, score) VALUES (?,?,?,?,?)" +
-            post.data.name,
-          post.data.url,
-          post.data.author,
-          post.data.title,
-          post.data.score),
+          db,
+          `INSERT INTO posts (ID, link, user, title, score)
+                     VALUES (?, ?, ?, ?, ?)`,
+          [
+            post.data.name as string,
+            post.data.url as string,
+            post.data.author as string,
+            post.data.title as string,
+            post.data.score as number,
+          ],
         );
       }),
     );
