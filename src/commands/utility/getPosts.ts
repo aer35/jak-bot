@@ -8,13 +8,14 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("getposts")
     .setDescription("Fetches posts from a specified subreddit."),
-  // If you ever want to use the option setting. But this will be hardcoded in the ENV file for this bot's purposes.
+  // If you ever want to use the option setting in the / command menu. But this will be hardcoded in the ENV file for this bot's purposes.
   // .addStringOption(option =>
   //     option.setName('subreddit')
   //         .setDescription('The subreddit to fetch posts from')
   //         .setRequired(true)),
   async execute(interaction) {
     console.log("Fetching posts from subreddit...");
+    // Hits the reddit JSON api and fetches top posts from the last week. Limited to 100 posts.
     const res = await fetch(
       `https://www.reddit.com/r/${SUBREDDIT_NAME}/top/.json?t=week&limit=100`,
     );
