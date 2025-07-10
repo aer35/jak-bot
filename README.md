@@ -9,6 +9,8 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 
 ## Commands
 
+All commands are locked to ADMINISTRATORS only.
+
 - `/getposts`
     - Checks the configured subreddit for posts with over 100 upvotes
     - Only uploads new posts from the last week
@@ -23,17 +25,22 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 
 ## Planned features
 
-- Command permissions
-    - Lock slash command permissions to certain users/roles
+- Better permission controls.
+    - Currently, all commands are locked to ADMINISTRATORS only.
+    - May allow for more granular permissions in the future.
+
 - Additional Commands
+    - *Reserved*
 
 - Scheduled run
     - The ability to set the bot to automatically check the configured subreddit on a schedule
     - Will have configurable scheduling
     - To avoid hitting Reddit and Discord API limits, limit the schedule
+
 - Additional bot configuration
     - Current methods utilize the `.env` file for all configuration. May allow for the bot to intake certain parameters
-      like subreddit name, etc...
+      in the commands like subreddit name, etc...
+
 - Generative AI API integration
     - Ability to generate posts in the style of the given subreddit based on a pre-written template via external APIs (
       ChatGPT, Deepseek, etc...)
@@ -50,14 +57,15 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 ## Installation
 
 1. Clone the repository
-2. Create a new application in the Discord portal
+2. Create a new application in the Discord portal. Follow instructions on creating a new Discord application
+   [here](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 3. Create a `.env` file in the root folder
 4. Add the following environment variables to the `.env` file:
    ```
-   DISCORD_TOKEN=YOUR_DISCORD_TOKEN // From Discord Developer Portal > Bot > GENERATE NEW TOKEN. You will not be able to see the token again after you leave the page. In case of issues you can always generate a new token.
-   DISCORD_CLIENT_ID=YOUR_CLIENT_ID // In Discord Developer Portal > Application Info > click "Copy" under Application ID)
-   DISCORD_GUILD_ID=YOUR_GUILD_ID // Right click server name in Discord and click "Copy Server ID"
-   SUBREDDIT_NAME=SUBREDDIT_NAME // The name of the subreddit you want to check. Do not include the "r/"
+   DISCORD_TOKEN=YOUR_DISCORD_TOKEN //From Discord Developer Portal > Bot > GENERATE NEW TOKEN. You will not be able to see the token again after you leave the page. In case of issues you can always generate a new token.
+   DISCORD_CLIENT_ID=YOUR_CLIENT_ID //In Discord Developer Portal > Application Info > click "Copy" under Application ID)
+   DISCORD_GUILD_ID=YOUR_GUILD_ID //Right click server name in Discord and click "Copy Server ID"
+   SUBREDDIT_NAME=SUBREDDIT_NAME //The name of the subreddit you want to check. Do not include the "r/"
    ```
 5. Install dependencies by running the following command:
     ```
@@ -81,5 +89,15 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
    ```
    npm run deploy-commands
    ```
-4. The bot should now be running and ready to use in your Discord server. If running in dev mode you will need to
-   redeploy commands every time you make changes to the command files.
+   You only need to do this once.
+
+
+4. The bot should now be running and ready to use in your Discord server.
+
+## Notes
+
+- If running in dev mode you will need to
+  redeploy commands every time you make changes to the command files since the bot uses the compiled Javascript files,
+  not the Typescript files.
+- Reddit blocks most VPNs. Fetching will fail if you are running the server locally and using a VPN.
+- Follow all Reddit and Discord TOS. I bear no responsibility for any actions taken by the bot or its users.
