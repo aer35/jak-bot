@@ -17,15 +17,16 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
     - Removes all posts stored in the database
     - Intended to be used with `/clearChannel`
     - May result in duplicate posts if channel is not cleared
+- `/clearchannel`
+    - For clearing a channel of posts
+    - Removes messages from a channel. Maximum 100, younger than 2 weeks.
 
 ## Planned features
 
 - Command permissions
     - Lock slash command permissions to certain users/roles
 - Additional Commands
-    - `/clearChannel`
-        - Removes all sent messages from a channel.
-        - For clearing a channel of posts
+
 - Scheduled run
     - The ability to set the bot to automatically check the configured subreddit on a schedule
     - Will have configurable scheduling

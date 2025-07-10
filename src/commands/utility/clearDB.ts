@@ -4,7 +4,9 @@ import { dbSetup, runPromisifyDB } from "../../dbSetup";
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("cleardb")
-    .setDescription("Clears the database."),
+    .setDescription("Clears the database.")
+    .setDefaultMemberPermissions(0), // Limits command to ADMINISTRATOR role
+
   async execute(interaction) {
     console.log("Clearing the database...");
 

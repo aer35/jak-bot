@@ -5,7 +5,8 @@ module.exports = {
     .setName("clearchannel")
     .setDescription(
       "Clears messages in the channel. Maximum 100 & <2 weeks old. Requires 'Manage Messages' permission.",
-    ),
+    )
+    .setDefaultMemberPermissions(0), // Limits command to ADMINISTRATOR role
 
   async execute(interaction) {
     console.log("Checking bot permissions...");

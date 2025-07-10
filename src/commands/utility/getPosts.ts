@@ -7,7 +7,9 @@ import { generateIndividualMessage } from "../../generateIndividualMessage";
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("getposts")
-    .setDescription("Fetches posts from a specified subreddit."),
+    .setDescription("Fetches posts from a specified subreddit.")
+    .setDefaultMemberPermissions(0), // Limits command to ADMINISTRATOR role
+
   // If you ever want to use the option setting in the / command menu. But this will be hardcoded in the ENV file for this bot's purposes.
   // .addStringOption(option =>
   //     option.setName('subreddit')
