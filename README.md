@@ -6,31 +6,38 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 
 - Reddit API integration
     - Configurable to check any subreddit
-    - Run `getPosts` to check for posts with over 100 upvotes
+
+## Commands
+
+- `/getposts`
+    - Checks the configured subreddit for posts with over 100 upvotes
     - Only uploads new posts from the last week
     - Keeps track of what posts have been stored
+- `/cleardb`
+    - Removes all posts stored in the database
+    - Intended to be used with `/clearChannel`
+    - May result in duplicate posts if channel is not cleared
 
 ## Planned features
 
 - Command permissions
-  - Lock slash command permissions to certain users/roles
+    - Lock slash command permissions to certain users/roles
 - Additional Commands
-  - `/clear`
-    - Removes all sent messages from a channel. 
-    - For clearing a channel of posts
-  - `/cleanDB`
-    - Removes all posts stored in the database
-    - Intended to be used with `/clear` 
-    - May allow duplicate posts
+    - `/clearChannel`
+        - Removes all sent messages from a channel.
+        - For clearing a channel of posts
 - Scheduled run
-  - The ability to set the bot to automatically check the configured subreddit on a schedule
-  - Will have configurable scheduling
-  - To avoid hitting Reddit and Discord API limits, limit the schedule
+    - The ability to set the bot to automatically check the configured subreddit on a schedule
+    - Will have configurable scheduling
+    - To avoid hitting Reddit and Discord API limits, limit the schedule
 - Additional bot configuration
-  - Current methods utilize the `.env` file for all configuration. May allow for the bot to intake certain parameters like subreddit name, etc...
+    - Current methods utilize the `.env` file for all configuration. May allow for the bot to intake certain parameters
+      like subreddit name, etc...
 - Generative AI API integration
-  - Ability to generate posts in the style of the given subreddit based on a pre-written template via external APIs (ChatGPT, Deepseek, etc...)
-  - Ability to generate posts in the style of the given subreddit based on a pre-written template via local API (Ollama, KoboldCPP, etc...)
+    - Ability to generate posts in the style of the given subreddit based on a pre-written template via external APIs (
+      ChatGPT, Deepseek, etc...)
+    - Ability to generate posts in the style of the given subreddit based on a pre-written template via local API (
+      Ollama, KoboldCPP, etc...)
 
 ## Requirements
 

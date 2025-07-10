@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { SUBREDDIT_NAME } from "../../config";
 import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
 import { generateMessageContent } from "../../generateMessageContent";
@@ -93,7 +93,10 @@ module.exports = {
           generateIndividualMessage(post.data, interaction.channel),
         ),
       );
-      await interaction.reply("Successfully got new posts.");
+      await interaction.reply({
+        content: "Successfully got new posts.",
+        flags: MessageFlags.Ephemeral,
+      });
     }
   },
 };
