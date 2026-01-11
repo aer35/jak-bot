@@ -16,17 +16,23 @@ module.exports = {
       `DELETE
              FROM posts`,
     );
-    const TableSize: any = await runPromisifyDB(
+
+    // We await the promise immediately so the type is never Promise, however since the runPromisifyDB function can return either the count (as a number) or an error we have to type it as unknown.
+    const tableSize: unknown = await runPromisifyDB(
       db,
       `SELECT COUNT(*)
              FROM posts`,
     );
-    if (TableSize > 0) {
+
+    // Adjusting this logic to account for tableSize possibly not being a number.
+    if (tableSize != 0) {
+      // This reply gets sent in the console.
       console.error(
         "Failed to clear the database. There are still entries in the posts table.",
       );
+      // This is the reply that the bot sends in Discord.
       await interaction.reply({
-        contend:
+        content:
           "Failed to clear the database. There are still entries in the posts table.",
         flags: MessageFlags.Ephemeral,
       });
