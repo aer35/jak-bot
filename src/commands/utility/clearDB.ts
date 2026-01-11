@@ -28,12 +28,12 @@ module.exports = {
     if (tableSize != 0) {
       // This reply gets sent in the console.
       console.error(
-        "Failed to clear the database. There are still entries in the posts table.",
+        `Failed to clear the database. Expected 'tableSize == 0', received: ${tableSize}. Please try again. If the issue persists, please let us know.`,
       );
       // This is the reply that the bot sends in Discord.
       await interaction.reply({
         content:
-          "Failed to clear the database. There are still entries in the posts table.",
+          "Failed to clear the database. There are possibly still entries present in the database. Please try again and check the console for more details.",
         flags: MessageFlags.Ephemeral,
       });
     } else {
