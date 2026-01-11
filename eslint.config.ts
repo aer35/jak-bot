@@ -1,4 +1,5 @@
 const js = require("@eslint/js");
+import eslintConfigPrettier from "eslint-config-prettier/flat";
 
 module.exports = [
   js.configs.recommended,
@@ -51,4 +52,5 @@ module.exports = [
       yoda: "error",
     },
   },
+  eslintConfigPrettier,
 ];

@@ -5,47 +5,47 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 ## Features
 
 - Reddit API integration
-    - Configurable to check any subreddit
+  - Configurable to check any subreddit
 
 ## Commands
 
 All commands are locked to ADMINISTRATORS only.
 
 - `/getposts`
-    - Checks the configured subreddit for posts with over 100 upvotes
-    - Only uploads new posts from the last week
-    - Keeps track of what posts have been stored
+  - Checks the configured subreddit for posts with over 100 upvotes
+  - Only uploads new posts from the last week
+  - Keeps track of what posts have been stored
 - `/cleardb`
-    - Removes all posts stored in the database
-    - Intended to be used with `/clearChannel`
-    - May result in duplicate posts if channel is not cleared
+  - Removes all posts stored in the database
+  - Intended to be used with `/clearChannel`
+  - May result in duplicate posts if channel is not cleared
 - `/clearchannel`
-    - For clearing a channel of posts
-    - Removes messages from a channel. Maximum 100, younger than 2 weeks.
+  - For clearing a channel of posts
+  - Removes messages from a channel. Maximum 100, younger than 2 weeks.
 
 ## Planned features
 
 - Better permission controls.
-    - Currently, all commands are locked to ADMINISTRATORS only.
-    - May allow for more granular permissions in the future.
+  - Currently, all commands are locked to ADMINISTRATORS only.
+  - May allow for more granular permissions in the future.
 
 - Additional Commands
-    - *Reserved*
+  - _Reserved_
 
 - Scheduled run
-    - The ability to set the bot to automatically check the configured subreddit on a schedule
-    - Will have configurable scheduling
-    - To avoid hitting Reddit and Discord API limits, limit the schedule
+  - The ability to set the bot to automatically check the configured subreddit on a schedule
+  - Will have configurable scheduling
+  - To avoid hitting Reddit and Discord API limits, limit the schedule
 
 - Additional bot configuration
-    - Current methods utilize the `.env` file for all configuration. May allow for the bot to intake certain parameters
-      in the commands like subreddit name, etc...
+  - Current methods utilize the `.env` file for all configuration. May allow for the bot to intake certain parameters
+    in the commands like subreddit name, etc...
 
 - Generative AI API integration
-    - Ability to generate posts in the style of the given subreddit based on a pre-written template via external APIs (
-      ChatGPT, Deepseek, etc...)
-    - Ability to generate posts in the style of the given subreddit based on a pre-written template via local API (
-      Ollama, KoboldCPP, etc...)
+  - Ability to generate posts in the style of the given subreddit based on a pre-written template via external APIs (
+    ChatGPT, Deepseek, etc...)
+  - Ability to generate posts in the style of the given subreddit based on a pre-written template via local API (
+    Ollama, KoboldCPP, etc...)
 
 ## Requirements
 
@@ -68,9 +68,9 @@ All commands are locked to ADMINISTRATORS only.
    SUBREDDIT_NAME=SUBREDDIT_NAME //The name of the subreddit you want to check. Do not include the "r/"
    ```
 5. Install dependencies by running the following command:
-    ```
-    npm install
-    ```
+   ```
+   npm install
+   ```
 6. Invite the bot to your server
 
 ## Usage
@@ -86,11 +86,12 @@ All commands are locked to ADMINISTRATORS only.
    npm run dev
    ```
 3. Deploy commands to the server with:
+
    ```
    npm run deploy-commands
    ```
-   You only need to do this once.
 
+   You only need to do this once.
 
 4. The bot should now be running and ready to use in your Discord server.
 
