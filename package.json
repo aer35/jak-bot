@@ -145,6 +145,7 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "eslint": "^9.21.0",
+    "jiti": "^2.6.1",
     "prettier": "^3.5.3",
     "tsup": "^8.4.0",
     "tsx": "^4.19.3",
@@ -158,7 +159,8 @@
     "deploy-commands": "npm run deploy-coomands:clear-all && npm run deploy-commands:build && npm run deploy-commands:run",
     "start": "node dist/index.js",
     "build": "tsup src/index.ts --minify",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src --ext .ts",
+    "lint:fix": "eslint ./src --ext .ts --fix"
   },
   "author": "",
   "license": "ISC",

@@ -1,18 +1,18 @@
 export const generateMessageContent = ({
-  permalink,
-  author,
-  title,
-  selftext,
-  url,
-  created,
+	permalink,
+	author,
+	title,
+	selftext,
+	url,
+	created,
 }) => {
-  // Maximum length for a Discord message is 2000 characters. Setting a buffer.
-  const leftoverLength =
+	// Maximum length for a Discord message is 2000 characters. Setting a buffer.
+	const leftoverLength =
     1950 - (permalink.length + author.length + title.length);
 
-  const convertedDate = new Date().toLocaleDateString("en-US", created);
+	const convertedDate = new Date().toLocaleDateString('en-US', created);
 
-  return `**Title:** ${title}
-**Author:** ${author} | **Posted:** ${created} | [Link](https://reddit.com${permalink})
-${selftext ? selftext.substring(0, leftoverLength) + "..." : url}`;
+	return `**Title:** ${title}
+**Author:** ${author} | **Posted:** ${convertedDate} | [Link](https://reddit.com${permalink})
+${selftext ? selftext.substring(0, leftoverLength) + '...' : url}`;
 };
