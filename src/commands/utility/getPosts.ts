@@ -49,9 +49,9 @@ module.exports = {
 
     console.log("Executing DB lookup for existing posts...");
     const db = await dbSetup();
-    const allDBEntryIDs: any = await fetchAll(db, "SELECT ID FROM posts");
+    const allDBEntryIDs: unknown = await fetchAll(db, "SELECT ID FROM posts");
     const allDBEntrySet = new Set(allDBEntryIDs.map((post) => post.ID));
-    console.log("DB accessed, retrieved all post IDs." + allDBEntrySet.size);
+    console.log("DB accessed, retrieved all post IDs. " + allDBEntrySet.size);
 
     // This array only has NEW posts that are not in the database.
     const filterNew = filterScore.filter(
