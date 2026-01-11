@@ -67,7 +67,7 @@ module.exports = {
         return runPromisifyDB(
           db,
           `INSERT INTO posts(ID, link, user, title, score)
-                     VALUES (?, ?, ?, ?, ?)`,
+           VALUES (?, ?, ?, ?, ?)`,
           [
             post.data.name,
             post.data.permalink,

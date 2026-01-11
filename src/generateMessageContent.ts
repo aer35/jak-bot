@@ -6,9 +6,10 @@ export const generateMessageContent = ({
   url,
   created,
 }) => {
-  // Maximum length for a Discord message is 2000 characters. Setting a buffer.
+  // Maximum length for a Discord message is 2000 characters. Setting an arbitrary buffer to prevent losing part of a message due to unforeseen characters.
+  const maxMsgLengthWithBuffer = 1950;
   const leftoverLength =
-    1950 - (permalink.length + author.length + title.length);
+    maxMsgLengthWithBuffer - (permalink.length + author.length + title.length);
 
   const convertedDate = new Date().toLocaleDateString("en-US", created);
 

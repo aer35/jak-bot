@@ -161,7 +161,9 @@
     "start": "node dist/index.js",
     "build": "tsup src/index.ts --minify",
     "lint": "eslint ./src --ext .ts",
-    "lint:fix": "eslint ./src --ext .ts --fix"
+    "lint:fix": "eslint ./src --ext .ts --fix",
+    "prettier": "prettier ./src --write",
+    "prettier:check": "prettier ./src --check"
   },
   "author": "",
   "license": "ISC",
