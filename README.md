@@ -58,7 +58,7 @@ All commands are locked to ADMINISTRATORS only.
 
 1. Clone the repository
 2. Create a new application in the Discord portal. Follow instructions on creating a new Discord application
-   [here](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
+   [here](https://discordjs.guide/legacy/preparations/app-setup).
 3. Create a `.env` file in the root folder
 4. Add the following environment variables to the `.env` file:
    ```

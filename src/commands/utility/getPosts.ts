@@ -1,21 +1,28 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
 import { SUBREDDIT_NAME } from "../../config";
 import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
 import { generateMessageContent } from "../../generateMessageContent";
 import { generateIndividualMessage } from "../../generateIndividualMessage";
 
-export const getPosts = {
+module.exports = {
   data: new SlashCommandBuilder()
     .setName("getposts")
     .setDescription("Fetches posts from a specified subreddit.")
-    .setDefaultMemberPermissions(0), // Limits command to ADMINISTRATOR role
-
+    // Limits command to Manage Server and Manage Messages permissions
+    .setDefaultMemberPermissions(
+      PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageGuild,
+    ),
   // If you ever want to use the option setting in the / command menu. But this will be hardcoded in the ENV file for this bot's purposes.
   // .addStringOption(option =>
   //     option.setName('subreddit')
   //         .setDescription('The subreddit to fetch posts from')
   //         .setRequired(true)),
-  async execute(interaction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     console.log("Fetching posts from subreddit...");
     // Hits the reddit JSON api and fetches top posts from the last week. Limited to 100 posts.
     const res = await fetch(
@@ -37,7 +44,8 @@ export const getPosts = {
     }
 
     // Catch if the subreddit has no posts
-    const posts = body.data.children;
+    // data has far too many nested levels (well over 30) to type properly here without defining a huge interface, so we use any.
+    const posts: { data: any }[] = body.data.children;
     if (posts.length === 0) {
       console.log("No posts found in subreddit. Exiting command.");
       await interaction.reply("No posts found.");
@@ -45,18 +53,21 @@ export const getPosts = {
     }
 
     // Filter down the number of posts to only those that we want.
-    const filterScore = posts.filter((post) => post.data.score > 100);
+    //@ts-ignore: Suppress argument number error
+    const filterScore = posts.filter((post) => post.data.score > 1000);
 
     console.log("Executing DB lookup for existing posts...");
     const db = await dbSetup();
+    //@ts-ignore: Suppress argument number error
     const allDBEntryIDs: { id: string }[] = (await fetchAll<{ id: string }>(
       db,
-      "SELECT ID FROM posts",
+      `SELECT ID
+       FROM posts`,
     )) as { id: string }[];
     const allDBEntrySet: Set<string> = new Set(
-      allDBEntryIDs.map((post) => post.ID),
+      allDBEntryIDs.map((post) => post.id),
     );
-    console.log("DB accessed, retrieved all post IDs. " + allDBEntrySet.size);
+    console.log(`DB accessed, retrieved all post IDs: ${allDBEntrySet.size}`);
 
     // This array only has NEW posts that are not in the database.
     const filterNew = filterScore.filter(

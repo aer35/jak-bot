@@ -1,16 +1,25 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
 import { dbSetup, runPromisifyDB } from "../../dbSetup";
 
-export const clearDB = {
+module.exports = {
   data: new SlashCommandBuilder()
     .setName("cleardb")
     .setDescription("Clears the database.")
-    .setDefaultMemberPermissions(0), // Limits command to ADMINISTRATOR role
+    // Limits command to Manage Server and Manage Messages permissions
+    .setDefaultMemberPermissions(
+      PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageGuild,
+    ),
 
-  async execute(interaction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     console.log("Clearing the database...");
 
     const db = await dbSetup();
+    console.log("DB DB DB" + db);
     await runPromisifyDB(
       db,
       `DELETE

@@ -1,18 +1,25 @@
-import { MessageFlags, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
 
-export const clearchannel = {
+module.exports = {
   data: new SlashCommandBuilder()
     .setName("clearchannel")
     .setDescription(
       "Clears messages in the channel. Maximum 100 & <2 weeks old. Requires 'Manage Messages' permission.",
     )
-    // Limits command to ADMINISTRATOR role
-    .setDefaultMemberPermissions(0),
+    // Limits command to Manage Server and Manage Messages permissions
+    .setDefaultMemberPermissions(
+      PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageGuild,
+    ),
 
-  async execute(interaction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     console.log("Checking bot permissions...");
     // Check if the bot has permission to manage messages
-    if (!interaction.guild.members.me.permissions.has("ManageMessages")) {
+    if (!interaction.guild!.members.me!.permissions.has("ManageMessages")) {
       console.error("Bot does not have permission to manage messages.");
       await interaction.reply({
         content:
@@ -22,10 +29,11 @@ export const clearchannel = {
     }
 
     console.log("Clearing messages in the channel...");
-    const channel = interaction.channel;
+    const channel = interaction.channel!;
     const messages = channel.messages;
 
     const toBeDeleted = await messages.fetch({ limit: 100 });
+    //@ts-ignore: Suppress missing property error
     await channel.bulkDelete(toBeDeleted, true);
 
     if (toBeDeleted.size === 0) {
