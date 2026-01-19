@@ -65,10 +65,10 @@ All commands are locked to ADMINISTRATORS only.
    DISCORD_TOKEN=YOUR_DISCORD_TOKEN //From Discord Developer Portal > Bot > GENERATE NEW TOKEN. You will not be able to see the token again after you leave the page. In case of issues you can always generate a new token.
    DISCORD_CLIENT_ID=YOUR_CLIENT_ID //In Discord Developer Portal > Application Info > click "Copy" under Application ID)
    DISCORD_GUILD_ID=YOUR_GUILD_ID //Right click server name in Discord and click "Copy Server ID"
-   SUBREDDIT_NAME=SUBREDDIT_NAME //The name of the subreddit you want to check. Do not include the "r/"
+   SUBREDDIT_NAME=SUBREDDIT_NAME //The name of the subreddit you want to check. Do not include the "r/". E.g. for r/programming use "programming".
    ```
 5. Install dependencies by running the following command:
-   ```
+   ```bash
    npm install
    ```
 6. Invite the bot to your server
@@ -77,17 +77,17 @@ All commands are locked to ADMINISTRATORS only.
 
 1. Open a terminal and navigate to the project directory
 2. Run the bot using the following command:
-   ```
+   ```bash
    npm run start
    ```
    OR
    Run the bot in development mode using the following command:
-   ```
+   ```bash
    npm run dev
    ```
 3. Deploy commands to the server with:
 
-   ```
+   ```bash
    npm run deploy-commands
    ```
 
