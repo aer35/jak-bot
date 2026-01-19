@@ -1,7 +1,7 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { dbSetup, runPromisifyDB } from "../../dbSetup";
 
-module.exports = {
+export const clearDB = {
   data: new SlashCommandBuilder()
     .setName("cleardb")
     .setDescription("Clears the database.")
@@ -14,14 +14,14 @@ module.exports = {
     await runPromisifyDB(
       db,
       `DELETE
-             FROM posts`,
+       FROM posts`,
     );
 
     // We await the promise immediately so the type is never Promise, however since the runPromisifyDB function can return either the count (as a number) or an error we have to type it as unknown.
     const tableSize: unknown = await runPromisifyDB(
       db,
       `SELECT COUNT(*)
-             FROM posts`,
+       FROM posts`,
     );
 
     // Adjusting this logic to account for tableSize possibly not being a number.

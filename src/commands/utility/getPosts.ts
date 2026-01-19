@@ -4,7 +4,7 @@ import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
 import { generateMessageContent } from "../../generateMessageContent";
 import { generateIndividualMessage } from "../../generateIndividualMessage";
 
-module.exports = {
+export const getPosts = {
   data: new SlashCommandBuilder()
     .setName("getposts")
     .setDescription("Fetches posts from a specified subreddit.")

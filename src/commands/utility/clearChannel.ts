@@ -1,6 +1,6 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export const clearchannel = {
   data: new SlashCommandBuilder()
     .setName("clearchannel")
     .setDescription(
