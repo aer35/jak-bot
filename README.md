@@ -85,13 +85,13 @@ All commands are locked to ADMINISTRATORS only.
    ```bash
    npm run dev
    ```
-3. Deploy commands to the server with:
+3. Deploy commands to the server with (you will need to open a second terminal window in the bot directory):
 
    ```bash
    npm run deploy-commands
    ```
 
-   You only need to do this once.
+   The commands will persist through restarts. You will only need to do this step again if new commands are added.
 
 4. The bot should now be running and ready to use in your Discord server.
 
