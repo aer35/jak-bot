@@ -66,6 +66,7 @@ All commands are locked to ADMINISTRATORS only.
    DISCORD_CLIENT_ID=YOUR_CLIENT_ID //In Discord Developer Portal > Application Info > click "Copy" under Application ID)
    DISCORD_GUILD_ID=YOUR_GUILD_ID //Right click server name in Discord and click "Copy Server ID"
    SUBREDDIT_NAME=SUBREDDIT_NAME //The name of the subreddit you want to check. Do not include the "r/". E.g. for r/programming use "programming".
+   MINIMUM_POST_KARMA=SOME_NUMBER //The minimum amount of upvotes a post must have to be sent in the server. E.g. 100
    ```
 5. Install dependencies by running the following command:
    ```bash
