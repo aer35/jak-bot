@@ -27,6 +27,7 @@ export const dbSetup = async () => {
      )`,
   );
   console.log("Accessed posts table.");
+  console.log("DB HERE: " + db);
   return db;
 };
 
@@ -44,7 +45,7 @@ const runPromisifyDB = (
         console.error(`Error running query: ${err.message}`);
         reject(err);
       } else {
-        console.log(`Query (${query}) executed successfully.`);
+        console.log(`Query executed successfully.`);
         resolve(result);
       }
     });

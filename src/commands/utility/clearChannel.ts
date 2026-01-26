@@ -37,14 +37,15 @@ module.exports = {
     await channel.bulkDelete(toBeDeleted, true);
 
     if (toBeDeleted.size === 0) {
-      interaction.reply({
+      await interaction.reply({
         content: "No messages to delete.",
         flags: MessageFlags.Ephemeral,
       });
+    } else {
+      await interaction.reply({
+        content: `Cleared ${toBeDeleted.size} messages in the channel.`,
+        flags: MessageFlags.Ephemeral,
+      });
     }
-    interaction.reply({
-      content: `Cleared ${toBeDeleted.size} messages in the channel.`,
-      flags: MessageFlags.Ephemeral,
-    });
   },
 };

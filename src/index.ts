@@ -50,6 +50,9 @@ for (const folder of commandFolders) {
 
     try {
       console.log("Command is valid. Executing...");
+      if (command.data.name === "getposts") {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+      }
       await command.execute(interaction);
     } catch (error) {
       console.error(error);

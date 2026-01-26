@@ -15,7 +15,10 @@ export const generateMessageContent = ({
 
   const convertedDate = new Date().toLocaleDateString("en-US", created);
 
+  const postLink: string = `<https://reddit.com${permalink}>`;
+
   return `**Title:** ${title}
-**Author:** ${author} | **Posted:** ${convertedDate} | [Link](https://reddit.com${permalink})
-${selftext ? selftext.substring(0, leftoverLength) + "..." : url}`;
+**Author:** ${author} | **Posted:** ${convertedDate} | [Link](${postLink})
+${url}
+${selftext ? `${selftext.substring(0, leftoverLength)}...` : ""}`;
 };

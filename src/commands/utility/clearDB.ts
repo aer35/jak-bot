@@ -19,7 +19,6 @@ module.exports = {
     console.log("Clearing the database...");
 
     const db = await dbSetup();
-    console.log("DB DB DB" + db);
     await runPromisifyDB(
       db,
       `DELETE
@@ -32,6 +31,7 @@ module.exports = {
       `SELECT COUNT(*)
        FROM posts`,
     );
+    console.log(`Current table size: ${tableSize}`);
 
     // Adjusting this logic to account for tableSize possibly not being a number.
     if (tableSize != 0) {

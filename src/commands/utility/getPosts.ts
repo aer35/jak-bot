@@ -4,7 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import { SUBREDDIT_NAME } from "../../config";
+import { MINIMUM_POST_KARMA, SUBREDDIT_NAME } from "../../config";
 import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
 import { generateMessageContent } from "../../generateMessageContent";
 import { generateIndividualMessage } from "../../generateIndividualMessage";
@@ -34,7 +34,7 @@ module.exports = {
     // Catch failure to fetch posts
     if (!body) {
       console.log("Failed to fetch posts from subreddit.");
-      await interaction.reply("Failed to fetch posts from the subreddit.");
+      await interaction.followUp("Failed to fetch posts from the subreddit.");
       return;
     } else {
       console.log(
@@ -54,7 +54,9 @@ module.exports = {
 
     // Filter down the number of posts to only those that we want.
     //@ts-ignore: Suppress argument number error
-    const filterScore = posts.filter((post) => post.data.score > 1000);
+    const filterPostsByScore = posts.filter(
+      (post) => post.data.score > Number(MINIMUM_POST_KARMA),
+    );
 
     console.log("Executing DB lookup for existing posts...");
     const db = await dbSetup();
@@ -64,21 +66,22 @@ module.exports = {
       `SELECT ID
        FROM posts`,
     )) as { id: string }[];
-    const allDBEntrySet: Set<string> = new Set(
-      allDBEntryIDs.map((post) => post.id),
+
+    const allDBEntrySet: Set<any> = new Set(
+      allDBEntryIDs.map((post: { id: string }) => post.id),
     );
     console.log(`DB accessed, retrieved all post IDs: ${allDBEntrySet.size}`);
 
     // This array only has NEW posts that are not in the database.
-    const filterNew = filterScore.filter(
+    const filterPostsNewOnly = filterPostsByScore.filter(
       (post) => !allDBEntrySet.has(post.data.name),
     );
 
     // TODO run this as a batch insert
     console.log("Inserting new posts into the database...");
-    console.log("New posts to insert: " + filterNew.length);
+    console.log("New posts to insert: " + filterPostsNewOnly.length);
     await Promise.all(
-      filterNew.map((post) => {
+      filterPostsNewOnly.map((post) => {
         console.log(`Inserting post: ${post.data.name}`);
         return runPromisifyDB(
           db,
@@ -98,23 +101,29 @@ module.exports = {
       "Finished inserting new posts into the database. Generating reply...",
     );
 
-    if (filterNew.length === 1) {
+    if (filterPostsNewOnly.length === 1) {
       console.log("Sending discord message...");
 
-      await interaction.reply(generateMessageContent(filterNew[0].data));
+      await interaction.followUp(
+        generateMessageContent(filterPostsNewOnly[0].data),
+      );
     } else {
       console.log(
         "More than one new post to be sent. Breaking into multiple messages.",
       );
       await Promise.all(
-        filterNew.map((post) =>
+        filterPostsNewOnly.map((post) =>
           generateIndividualMessage(post.data, interaction.channel),
         ),
       );
-      await interaction.reply({
-        content: "Successfully got new posts.",
-        flags: MessageFlags.Ephemeral,
-      });
+      try {
+        await interaction.followUp({
+          content: "Successfully got new posts.",
+          flags: MessageFlags.Ephemeral,
+        });
+      } catch (error) {
+        console.error("Error sending confirmation message: " + error);
+      }
     }
   },
 };
