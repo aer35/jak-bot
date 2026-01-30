@@ -4,7 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js";
-import { dbSetup, runPromisifyDB } from "../../dbSetup";
+import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -26,11 +26,14 @@ module.exports = {
     );
 
     // We await the promise immediately so the type is never Promise, however since the runPromisifyDB function can return either the count (as a number) or an error we have to type it as unknown.
-    const tableSize: unknown = await runPromisifyDB(
+    const tableSizeQuery = await fetchAll<{
+      count: number;
+    }>(
       db,
-      `SELECT COUNT(*)
+      `SELECT COUNT(*) as count
        FROM posts`,
     );
+    const tableSize: number = tableSizeQuery[0].count;
     console.log(`Current table size: ${tableSize}`);
 
     // Adjusting this logic to account for tableSize possibly not being a number.

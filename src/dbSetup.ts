@@ -27,7 +27,6 @@ export const dbSetup = async () => {
      )`,
   );
   console.log("Accessed posts table.");
-  console.log("DB HERE: " + db);
   return db;
 };
 
@@ -52,7 +51,28 @@ const runPromisifyDB = (
   });
 };
 
-const fetchAll = (db: sqlite3.Database, query: string) => {
+const runPromisifyDBGet = (
+  db: sqlite3.Database,
+  query: string,
+  params?: any[],
+) => {
+  return new Promise((resolve, reject) => {
+    db.get(query, params, (err: { message: string }, row: any) => {
+      if (err) {
+        console.error("Error querying data: " + err.message);
+        reject(err);
+      } else {
+        console.log("Data queried successfully.");
+        resolve(row);
+      }
+    });
+  });
+};
+
+const fetchAll = <Result extends Record<string, unknown>>(
+  db: sqlite3.Database,
+  query: string,
+): Promise<Result[]> => {
   return new Promise((resolve, reject) => {
     db.all(query, (err: { message: string }, rows: any) => {
       if (err) {
@@ -66,4 +86,4 @@ const fetchAll = (db: sqlite3.Database, query: string) => {
   });
 };
 
-export { runPromisifyDB, fetchAll };
+export { runPromisifyDB, fetchAll, runPromisifyDBGet };
