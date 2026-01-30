@@ -4,7 +4,7 @@ export const dbSetup = async () => {
   const db: sqlite3.Database = await new Promise((resolve, reject) => {
     const database = new sqlite3.Database("database.db", (err) => {
       if (err) {
-        console.error("Error opening database " + err.message);
+        console.error(`Error opening database: ${err.message}`);
         reject(err);
       } else {
         console.log("Connected to the database.");
@@ -59,7 +59,7 @@ const runPromisifyDBGet = (
   return new Promise((resolve, reject) => {
     db.get(query, params, (err: { message: string }, row: any) => {
       if (err) {
-        console.error("Error querying data: " + err.message);
+        console.error(`Error querying data: ${err.message}`);
         reject(err);
       } else {
         console.log("Data queried successfully.");
@@ -76,7 +76,7 @@ const fetchAll = <Result extends Record<string, unknown>>(
   return new Promise((resolve, reject) => {
     db.all(query, (err: { message: string }, rows: any) => {
       if (err) {
-        console.error("Error fetching data: " + err.message);
+        console.error(`Error fetching data: ${err.message}`);
         reject(err);
       } else {
         console.log("Data fetched successfully.");

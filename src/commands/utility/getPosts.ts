@@ -38,8 +38,8 @@ module.exports = {
       return;
     } else {
       console.log(
-        "Received response from Reddit API. Number of posts: " +
-          body.data.children.length,
+        `Received response from Reddit API. Number of posts:
+          ${body.data.children.length}`,
       );
     }
 
@@ -79,7 +79,7 @@ module.exports = {
 
     // TODO run this as a batch insert
     console.log("Inserting new posts into the database...");
-    console.log("New posts to insert: " + filterPostsNewOnly.length);
+    console.log(`New posts to insert: ${filterPostsNewOnly.length}`);
     await Promise.all(
       filterPostsNewOnly.map((post) => {
         console.log(`Inserting post: ${post.data.name}`);
@@ -122,7 +122,7 @@ module.exports = {
           flags: MessageFlags.Ephemeral,
         });
       } catch (error) {
-        console.error("Error sending confirmation message: " + error);
+        console.error(`Error sending confirmation message: ${error}`);
       }
     }
   },
