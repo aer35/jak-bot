@@ -6,28 +6,32 @@ This project is a Discord bot built using **TypeScript** and the **discord.js** 
 
 - Reddit API integration
   - Configurable to check any subreddit
+  - Configurable minimum post karma
 
 ## Commands
 
-All commands are locked to ADMINISTRATORS only.
+All commands require Manage Messages and Manage Server (ManageGuild) permissions. (Planned to be configurable in the
+future)
 
 - `/getposts`
-  - Checks the configured subreddit for posts with over 100 upvotes
-  - Only uploads new posts from the last week
-  - Keeps track of what posts have been stored
+  - Pulls all posts from the chosen subreddit with at least X karma
+    - The subreddit is configurable via the `.env` file
+    - X is configurable via the `.env` file
+  - Only sends new posts from the last week
+  - Keeps track of what posts have already been sent to avoid duplicates
 - `/cleardb`
   - Removes all posts stored in the database
   - Intended to be used with `/clearChannel`
   - May result in duplicate posts if channel is not cleared
 - `/clearchannel`
-  - For clearing a channel of posts
-  - Removes messages from a channel. Maximum 100, younger than 2 weeks.
+  - For clearing a channel of posts and other messages (if any)
+  - Removes messages from a channel. Maximum 100 and no greater than 2 weeks old.
 
 ## Planned features
 
 - Better permission controls.
-  - Currently, all commands are locked to ADMINISTRATORS only.
-  - May allow for more granular permissions in the future.
+  - Currently, all commands require Manage Messages and Manage Server (ManageGuild) permissions.
+  - May allow for more configurable permission setting in the future.
 
 - Additional Commands
   - _Reserved_
@@ -36,6 +40,8 @@ All commands are locked to ADMINISTRATORS only.
   - The ability to set the bot to automatically check the configured subreddit on a schedule
   - Will have configurable scheduling
   - To avoid hitting Reddit and Discord API limits, limit the schedule
+    - Remember that the bot only displays new posts over a karma limit. Running it too often will likely result in
+      hitting API limits with no new posts.
 
 - Additional bot configuration
   - Current methods utilize the `.env` file for all configuration. May allow for the bot to intake certain parameters
@@ -53,6 +59,7 @@ All commands are locked to ADMINISTRATORS only.
 - Discord client ID
 - Discord guild ID (Server ID)
 - The name of the subreddit you want to check
+- The minimum post karma you want posts to have
 
 ## Installation
 
@@ -103,3 +110,7 @@ All commands are locked to ADMINISTRATORS only.
   not the Typescript files.
 - Reddit blocks most VPNs. Fetching will fail if you are running the server locally and using a VPN.
 - Follow all Reddit and Discord TOS. I bear no responsibility for any actions taken by the bot or its users.
+
+## Issues
+
+- If you encounter any issues or have suggestions for improvements, please open an issue on the GitHub repository.
