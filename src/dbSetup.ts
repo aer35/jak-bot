@@ -1,10 +1,10 @@
 import sqlite3 from "sqlite3";
 
 export const dbSetup = async () => {
-  const db = await new Promise((resolve, reject) => {
+  const db: sqlite3.Database = await new Promise((resolve, reject) => {
     const database = new sqlite3.Database("database.db", (err) => {
       if (err) {
-        console.error("Error opening database " + err.message);
+        console.error(`Error opening database: ${err.message}`);
         reject(err);
       } else {
         console.log("Connected to the database.");
@@ -17,38 +17,48 @@ export const dbSetup = async () => {
   await runPromisifyDB(
     db,
     `CREATE TABLE IF NOT EXISTS posts
-         (
-             ID         TEXT UNIQUE PRIMARY KEY,
-             link       TEXT,
-             user       TEXT,
-             title      TEXT,
-             score      INTEGER,
-             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-         )`,
+     (
+         ID         TEXT UNIQUE PRIMARY KEY,
+         link       TEXT,
+         user       TEXT,
+         title      TEXT,
+         score      INTEGER,
+         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+     )`,
   );
   console.log("Accessed posts table.");
   return db;
 };
 
-const runPromisifyDB = (db, query, params?) => {
+// db is always going to be a Database instance
+// query is always going to be a string or string template
+// params, where used, are an array of varying objects
+const runPromisifyDB = (
+  db: sqlite3.Database,
+  query: string,
+  params?: any[],
+) => {
   return new Promise((resolve, reject) => {
-    db.run(query, params, (err, result) => {
+    db.run(query, params, (err: { message: string }, result: any) => {
       if (err) {
-        console.error("Error running query: " + err.message);
+        console.error(`Error running query: ${err.message}`);
         reject(err);
       } else {
-        console.log("Query executed successfully.");
+        console.log(`Query executed successfully.`);
         resolve(result);
       }
     });
   });
 };
 
-const fetchAll = (db, query) => {
+const fetchAll = <Result extends Record<string, unknown>>(
+  db: sqlite3.Database,
+  query: string,
+): Promise<Result[]> => {
   return new Promise((resolve, reject) => {
-    db.all(query, (err, rows) => {
+    db.all(query, (err: { message: string }, rows: any) => {
       if (err) {
-        console.error("Error fetching data: " + err.message);
+        console.error(`Error fetching data: ${err.message}`);
         reject(err);
       } else {
         console.log("Data fetched successfully.");

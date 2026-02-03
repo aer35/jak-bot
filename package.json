@@ -145,7 +145,9 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "eslint": "^9.21.0",
-    "prettier": "^3.5.3",
+    "eslint-config-prettier": "^10.1.8",
+    "jiti": "^2.6.1",
+    "prettier": "3.7.4",
     "tsup": "^8.4.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
@@ -154,11 +156,14 @@
     "dev": "tsx watch ./src",
     "deploy-coomands:clear-all": "rm -rf dist/commands",
     "deploy-commands:build": "tsc --outDir dist",
-    "deploy-commands:run": "node dist/deploy-commands.js",
+    "deploy-commands:run": "node dist/deployCommands.js",
     "deploy-commands": "npm run deploy-coomands:clear-all && npm run deploy-commands:build && npm run deploy-commands:run",
     "start": "node dist/index.js",
     "build": "tsup src/index.ts --minify",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src --ext .ts",
+    "lint:fix": "eslint ./src --ext .ts --fix",
+    "prettier": "prettier ./src --write",
+    "prettier:check": "prettier ./src --check"
   },
   "author": "",
   "license": "ISC",

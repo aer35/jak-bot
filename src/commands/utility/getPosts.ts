@@ -1,18 +1,30 @@
-import { SlashCommandBuilder } from "discord.js";
-import { SUBREDDIT_NAME } from "../../config";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from "discord.js";
+import { MINIMUM_POST_KARMA, SUBREDDIT_NAME } from "../../config";
 import { dbSetup, fetchAll, runPromisifyDB } from "../../dbSetup";
+import { generateMessageContent } from "../../generateMessageContent";
+import { generateIndividualMessage } from "../../generateIndividualMessage";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("getposts")
-    .setDescription("Fetches posts from a specified subreddit."),
-  // If you ever want to use the option setting. But this will be hardcoded in the ENV file for this bot's purposes.
+    .setDescription("Fetches posts from a specified subreddit.")
+    // Limits command to Manage Server and Manage Messages permissions
+    .setDefaultMemberPermissions(
+      PermissionFlagsBits.ManageMessages | PermissionFlagsBits.ManageGuild,
+    ),
+  // If you ever want to use the option setting in the / command menu. But this will be hardcoded in the ENV file for this bot's purposes.
   // .addStringOption(option =>
   //     option.setName('subreddit')
   //         .setDescription('The subreddit to fetch posts from')
   //         .setRequired(true)),
-  async execute(interaction) {
+  async execute(interaction: ChatInputCommandInteraction) {
     console.log("Fetching posts from subreddit...");
+    // Hits the reddit JSON api and fetches top posts from the last week. Limited to 100 posts.
     const res = await fetch(
       `https://www.reddit.com/r/${SUBREDDIT_NAME}/top/.json?t=week&limit=100`,
     );
@@ -22,17 +34,19 @@ module.exports = {
     // Catch failure to fetch posts
     if (!body) {
       console.log("Failed to fetch posts from subreddit.");
-      await interaction.reply("Failed to fetch posts from the subreddit.");
+      await interaction.followUp("Failed to fetch posts from the subreddit.");
       return;
     } else {
+      // Maximum will be 100
       console.log(
-        "Received response from Reddit API. Number of posts: " +
-          body.data.children.length,
+        `Received response from Reddit API. Number of posts:
+          ${body.data.children.length}`,
       );
     }
 
     // Catch if the subreddit has no posts
-    const posts = body.data.children;
+    // data has far too many nested levels (well over 30) to type properly here without defining a huge interface, so we use any.
+    const posts: { data: any }[] = body.data.children;
     if (posts.length === 0) {
       console.log("No posts found in subreddit. Exiting command.");
       await interaction.reply("No posts found.");
@@ -40,40 +54,46 @@ module.exports = {
     }
 
     // Filter down the number of posts to only those that we want.
-    const filterScore = posts.filter((post) => post.data.score > 100);
+    //@ts-ignore: Suppress argument number error
+    const filterPostsByScore = posts.filter(
+      (post) => post.data.score > Number(MINIMUM_POST_KARMA),
+    );
 
     console.log("Executing DB lookup for existing posts...");
     const db = await dbSetup();
-    const allPostIDs: any = await fetchAll(db, "SELECT ID FROM posts");
-    const allPostIDSet = new Set(allPostIDs.map((post) => post.data.ID));
-    console.log("DB accessed, retrieved all post IDs." + allPostIDSet.size);
+    //@ts-ignore: Suppress argument number error
+    const allDBEntryIDs: { id: string }[] = (await fetchAll<{ id: string }>(
+      db,
+      `SELECT ID as id
+       FROM posts`,
+    )) as { id: string }[];
+
+    const allDBEntrySet: Set<any> = new Set(
+      allDBEntryIDs.map((post: { id: string }) => post.id),
+    );
+    console.log(`DB accessed, retrieved all post IDs: ${allDBEntrySet.size}`);
 
     // This array only has NEW posts that are not in the database.
-    const filterNew = filterScore.filter(
-      (post) => !allPostIDSet.has(post.data.name),
+    const filterPostsNewOnly = filterPostsByScore.filter(
+      (post) => !allDBEntrySet.has(post.data.name),
     );
 
     // TODO run this as a batch insert
     console.log("Inserting new posts into the database...");
-    console.log("New posts to insert: " + filterNew.length);
+    console.log(`New posts to insert: ${filterPostsNewOnly.length}`);
     await Promise.all(
-      filterNew.map((post) => {
+      filterPostsNewOnly.map((post) => {
         console.log(`Inserting post: ${post.data.name}`);
-        console.log("Name type: " + typeof post.data.name);
-        console.log("url type: " + typeof post.data.url);
-        console.log("author type: " + typeof post.data.author);
-        console.log("title type: " + typeof post.data.title);
-        console.log("score type: " + typeof post.data.score);
         return runPromisifyDB(
           db,
-          `INSERT INTO posts (ID, link, user, title, score)
-                     VALUES (?, ?, ?, ?, ?)`,
+          `INSERT INTO posts(ID, link, user, title, score)
+           VALUES (?, ?, ?, ?, ?)`,
           [
-            post.data.name as string,
-            post.data.url as string,
-            post.data.author as string,
-            post.data.title as string,
-            post.data.score as number,
+            post.data.name,
+            post.data.permalink,
+            post.data.author,
+            post.data.title,
+            post.data.score,
           ],
         );
       }),
@@ -82,16 +102,36 @@ module.exports = {
       "Finished inserting new posts into the database. Generating reply...",
     );
 
-    const replyContent = filterNew
-      .map(
-        (post) =>
-          `**Title:** ${post.data.title}\n**Author:** ${post.data.author}\n**Score:** ${post.data.score}\n**Link:** [Link](${post.data.url})\n`,
-      )
-      .join("\n");
-    console.log("Sending discord message...");
+    // TODO refactor this logic to be better
+    if (filterPostsNewOnly.length === 1) {
+      console.log("Sending discord message...");
 
-    // Currently bot sends one message with all the posts.
-    // TODO break out into multiple messages. One per post.
-    await interaction.reply(replyContent);
+      await interaction.followUp(
+        generateMessageContent(filterPostsNewOnly[0].data),
+      );
+    } else if (filterPostsNewOnly.length === 0) {
+      console.log("No new posts to be sent.");
+      await interaction.followUp({
+        content: "No new posts to be sent.",
+        flags: MessageFlags.Ephemeral,
+      });
+    } else {
+      console.log(
+        "More than one new post to be sent. Breaking into multiple messages.",
+      );
+      await Promise.all(
+        filterPostsNewOnly.map((post) =>
+          generateIndividualMessage(post.data, interaction.channel),
+        ),
+      );
+      try {
+        await interaction.followUp({
+          content: `Successfully got ${filterPostsNewOnly.length} new posts.`,
+          flags: MessageFlags.Ephemeral,
+        });
+      } catch (error) {
+        console.error(`Error sending confirmation message: ${error}`);
+      }
+    }
   },
 };

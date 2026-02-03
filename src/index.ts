@@ -21,7 +21,7 @@ for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
@@ -49,7 +49,10 @@ for (const folder of commandFolders) {
     }
 
     try {
-      console.log(`Command is valid. Executing...`);
+      console.log("Command is valid. Executing...");
+      if (command.data.name === "getposts") {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+      }
       await command.execute(interaction);
     } catch (error) {
       console.error(error);
