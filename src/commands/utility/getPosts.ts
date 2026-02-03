@@ -37,6 +37,7 @@ module.exports = {
       await interaction.followUp("Failed to fetch posts from the subreddit.");
       return;
     } else {
+      // Maximum will be 100
       console.log(
         `Received response from Reddit API. Number of posts:
           ${body.data.children.length}`,

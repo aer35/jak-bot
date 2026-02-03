@@ -51,24 +51,6 @@ const runPromisifyDB = (
   });
 };
 
-const runPromisifyDBGet = (
-  db: sqlite3.Database,
-  query: string,
-  params?: any[],
-) => {
-  return new Promise((resolve, reject) => {
-    db.get(query, params, (err: { message: string }, row: any) => {
-      if (err) {
-        console.error(`Error querying data: ${err.message}`);
-        reject(err);
-      } else {
-        console.log("Data queried successfully.");
-        resolve(row);
-      }
-    });
-  });
-};
-
 const fetchAll = <Result extends Record<string, unknown>>(
   db: sqlite3.Database,
   query: string,
@@ -86,4 +68,4 @@ const fetchAll = <Result extends Record<string, unknown>>(
   });
 };
 
-export { runPromisifyDB, fetchAll, runPromisifyDBGet };
+export { runPromisifyDB, fetchAll };

@@ -26,6 +26,7 @@ future)
 - `/clearchannel`
   - For clearing a channel of posts and other messages (if any)
   - Removes messages from a channel. Maximum 100 and no greater than 2 weeks old.
+  - Will remove user messages as well as bot messages and threads.
 
 ## Planned features
 
@@ -83,8 +84,16 @@ future)
 
 ## Usage
 
-1. Open a terminal and navigate to the project directory
-2. Run the bot using the following command:
+1. Open a terminal and navigate to the project directory.
+2. Deploy commands to the server with (you will need to open a second terminal window in the bot directory):
+
+   ```bash
+   npm run deploy-commands
+   ```
+
+   The commands will persist through restarts. You will only need to do this step again if new commands are added.
+
+3. Run the bot using the following command:
    ```bash
    npm run start
    ```
@@ -93,23 +102,18 @@ future)
    ```bash
    npm run dev
    ```
-3. Deploy commands to the server with (you will need to open a second terminal window in the bot directory):
-
-   ```bash
-   npm run deploy-commands
-   ```
-
-   The commands will persist through restarts. You will only need to do this step again if new commands are added.
-
 4. The bot should now be running and ready to use in your Discord server.
 
 ## Notes
 
-- If running in dev mode you will need to
-  redeploy commands every time you make changes to the command files since the bot uses the compiled Javascript files,
+- When running in dev mode you must redeploy commands each time you make changes to the command files in order to test
+  the changes, both for new functions and regression. The bot
+  uses the transpiled Javascript files in the `/dist` folder,
   not the Typescript files.
-- Reddit blocks most VPNs. Fetching will fail if you are running the server locally and using a VPN.
-- Follow all Reddit and Discord TOS. I bear no responsibility for any actions taken by the bot or its users.
+- You need to run `deploy-commands` at least once before running the bot to generate the JS files or `start` will
+  fail.
+- Reddit blocks VPNs. Fetching will fail if you are running the server from behind a VPN.
+- Follow all Reddit and Discord TOS. We bear no responsibility for any actions taken by the bot or its users.
 
 ## Issues
 
