@@ -64,7 +64,7 @@ module.exports = {
     //@ts-ignore: Suppress argument number error
     const allDBEntryIDs: { id: string }[] = (await fetchAll<{ id: string }>(
       db,
-      `SELECT ID
+      `SELECT ID as id
        FROM posts`,
     )) as { id: string }[];
 
@@ -102,12 +102,19 @@ module.exports = {
       "Finished inserting new posts into the database. Generating reply...",
     );
 
+    // TODO refactor this logic to be better
     if (filterPostsNewOnly.length === 1) {
       console.log("Sending discord message...");
 
       await interaction.followUp(
         generateMessageContent(filterPostsNewOnly[0].data),
       );
+    } else if (filterPostsNewOnly.length === 0) {
+      console.log("No new posts to be sent.");
+      await interaction.followUp({
+        content: "No new posts to be sent.",
+        flags: MessageFlags.Ephemeral,
+      });
     } else {
       console.log(
         "More than one new post to be sent. Breaking into multiple messages.",
@@ -119,7 +126,7 @@ module.exports = {
       );
       try {
         await interaction.followUp({
-          content: "Successfully got new posts.",
+          content: `Successfully got ${filterPostsNewOnly.length} new posts.`,
           flags: MessageFlags.Ephemeral,
         });
       } catch (error) {
